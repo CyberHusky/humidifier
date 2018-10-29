@@ -1,20 +1,19 @@
 #include <OLED_I2C.h>
-#include <DHT11.h>
-
-OLED  myOLED(SDA, SCL, 8); // A4, A5
-
-extern uint8_t SmallFont[];
-extern uint8_t MediumFont[];
-extern uint8_t MediumNumbers[];
-extern uint8_t BigNumbers[];
-
-void myOLEDscreenupd(float, float);   // function for OLED update information
+#include <DHT.h>
 
 #define DHTPIN 2          // data pin from DHT11
 #define DHTTYPE DHT11     // Type of DHT
-DHT dht(DHTPIN, DHTTYPE); // define sensor
+
+OLED  myOLED(SDA, SCL, 8); // A4, A5
+DHT dht(DHTPIN, DHTTYPE);  // define sensor
+
+extern uint8_t SmallFont[];
+extern uint8_t MediumNumbers[];
+extern uint8_t BigNumbers[];
 
 
+
+void myOLEDscreenupd(float, float);   // function for OLED update information
 
 void setup() {
 
@@ -24,8 +23,7 @@ void setup() {
 
   dht.begin();
 
-  Serial.begin(9600);
-  
+  Serial.begin(9600);  
   
 }
 
@@ -38,7 +36,7 @@ void loop() {
 
   // Reading temp and humidity from sensor, delay of this operation is 250ms
   float h = dht.readHumidity();
-  float t = dht.readTemperature();
+  float t = dht.readTemperature() + 4.0;
   Serial.print("Humidity: ");
   Serial.println(h);
   Serial.print("Temp: ");
@@ -48,10 +46,15 @@ void loop() {
 }
 
 
+
+
+
+
+
 void myOLEDscreenupd(float h, float t){
 
-  int height_hum_txt  = 5;
-  int height_temp_txt = 36;
+  int height_hum_txt  = 5;  // base position of humidity text
+  int height_temp_txt = 36; // base position of temperature text
 
 
   myOLED.clrScr();
@@ -59,12 +62,12 @@ void myOLEDscreenupd(float h, float t){
   myOLED.setFont(SmallFont);
   myOLED.print({"Humidity is, %:"}, CENTER, height_hum_txt);
   myOLED.setFont(MediumNumbers);
-  myOLED.print({String(h, 2)}, CENTER, height_hum_txt + 9);
+  myOLED.print({String(h, 0)}, CENTER, height_hum_txt + 9);
 
   myOLED.setFont(SmallFont);
   myOLED.print({"Temperature is: "}, CENTER, height_temp_txt);
   myOLED.setFont(MediumNumbers);
-  myOLED.print({String(t, 2)}, CENTER, height_temp_txt + 9);
+  myOLED.print({String(t, 0)}, CENTER, height_temp_txt + 9);
 
 /*
   myOLED.print(Plant1_info, LEFT, 16); 
